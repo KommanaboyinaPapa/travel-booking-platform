@@ -9,11 +9,16 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const dbHost = process.env.DB_HOST || 'localhost';
+const isLocalHost = dbHost === 'localhost' || dbHost === '127.0.0.1';
+
 const connection = await mysql.createConnection({
-  host: process.env.DB_HOST || 'localhost',
+  host: dbHost,
+  port: Number(process.env.DB_PORT || 3306),
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
   multipleStatements: true,
+  ...(!isLocalHost ? { ssl: {} } : {}),
 });
 
 try {

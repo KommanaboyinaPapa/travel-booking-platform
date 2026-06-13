@@ -1,6 +1,16 @@
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'replace_me';
+const JWT_SECRET = (() => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('JWT_SECRET environment variable is required in production');
+    }
+    console.warn('WARNING: JWT_SECRET not set. Using insecure fallback for development only.');
+    return 'dev_insecure_fallback';
+  }
+  return secret;
+})();
 
 export function requireAuth(req, res, next) {
   const auth = req.headers.authorization;

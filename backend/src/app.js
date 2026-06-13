@@ -18,7 +18,13 @@ import { seedDatabase } from './controllers/seedController.js';
 
 const app = express();
 
-app.use(cors());
+app.set('trust proxy', 1);
+
+const corsOrigin = process.env.CORS_ORIGIN || '*';
+const allowedOrigins = corsOrigin.split(',').map(s => s.trim());
+app.use(cors({
+  origin: allowedOrigins.length === 1 ? allowedOrigins[0] : allowedOrigins,
+}));
 app.use(express.json({ limit: '10mb' }));
 
 app.use('/api/auth', authRoutes);
