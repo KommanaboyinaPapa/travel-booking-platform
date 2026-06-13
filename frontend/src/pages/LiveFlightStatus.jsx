@@ -58,6 +58,23 @@ export default function LiveFlightStatus() {
   useEffect(() => { saveTrackedFlightIds(trackedFlightIds); }, [trackedFlightIds]);
   useEffect(() => { saveFlightAlerts(notifications); }, [notifications]);
 
+  // Request browser notification permission on first visit
+  useEffect(() => {
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+  }, []);
+
+  function showBrowserNotification(title, body) {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      try {
+        new Notification(title, { body, icon: '/favicon.ico' });
+      } catch {
+        // Silently fail if notification fails
+      }
+    }
+  }
+
   const sortedFlights = useMemo(
     () => [...flights].sort((a, b) => new Date(a.departureTime) - new Date(b.departureTime)),
     [flights]
@@ -120,7 +137,9 @@ export default function LiveFlightStatus() {
       const latestStatus = response.flightStatus;
       updateFlightStatus(flightId, latestStatus);
       setTrackedFlightIds(current => current.includes(flightId) ? current : [...current, flightId]);
-      addNotifications(createNotificationsForFlight(previousFlight, latestStatus, wasTracked));
+      const newItems = createNotificationsForFlight(previousFlight, latestStatus, wasTracked);
+      addNotifications(newItems);
+      newItems.forEach(n => showBrowserNotification(n.title, n.description));
       setTrackingMessage(`Flight ${flightId} status refreshed successfully.`);
     } catch {
       setTrackingMessage(`Unable to track flight ${flightId} right now.`);

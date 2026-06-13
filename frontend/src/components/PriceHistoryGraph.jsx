@@ -1,12 +1,5 @@
-const MOCK_HISTORY = [
-  { day: 'Mon', newPrice: 250 },
-  { day: 'Tue', newPrice: 265 },
-  { day: 'Wed', newPrice: 275 },
-  { day: 'Thu', newPrice: 290 },
-  { day: 'Fri', newPrice: 280 },
-  { day: 'Sat', newPrice: 300 },
-  { day: 'Sun', newPrice: 308 },
-];
+import { useEffect, useState } from 'react';
+import { getPriceHistory } from '../services/api.js';
 
 function trendBadge(prices) {
   const last = prices[prices.length - 1];
@@ -18,9 +11,31 @@ function trendBadge(prices) {
 }
 
 export default function PriceHistoryGraph({ entityType, entityId }) {
-  const history = MOCK_HISTORY;
+  const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const prices = history.map(h => Number(h.newPrice));
+  useEffect(() => {
+    if (!entityType || !entityId) return;
+    let cancelled = false;
+    setLoading(true);
+    setError('');
+    getPriceHistory(entityType, entityId, 7)
+      .then(res => { if (!cancelled) setHistory(res.history || []); })
+      .catch(() => { if (!cancelled) setError('Unable to load price history.'); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [entityType, entityId]);
+
+  if (loading) {
+    return <div className="price-history-card"><div className="price-history-header"><span className="price-history-title">📈 Price History (7d)</span></div><div className="price-history-loading" style={{ padding: '20px', textAlign: 'center', color: '#94a3b8', fontSize: '0.82rem' }}>Loading price history…</div></div>;
+  }
+
+  if (error || history.length < 2) {
+    return <div className="price-history-card"><div className="price-history-header"><span className="price-history-title">📈 Price History (7d)</span></div><div className="price-history-loading" style={{ padding: '20px', textAlign: 'center', color: '#94a3b8', fontSize: '0.82rem' }}>{error || 'Insufficient price history data.'}</div></div>;
+  }
+
+  const prices = history.map(h => Number(h.price || h.newPrice));
   const minP = Math.min(...prices);
   const maxP = Math.max(...prices);
   const range = maxP - minP || 1;
@@ -94,11 +109,14 @@ export default function PriceHistoryGraph({ entityType, entityId }) {
           );
         })}
 
-        {history.map((h, i) => (
-          <text key={i} x={PAD.l + i * xStep} y={H - 3} textAnchor="middle" className="price-chart-xlabel">
-            {h.day}
-          </text>
-        ))}
+        {history.map((h, i) => {
+          const dayLabel = h.day || (h.createdAt ? new Date(h.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '');
+          return (
+            <text key={i} x={PAD.l + i * xStep} y={H - 3} textAnchor="middle" className="price-chart-xlabel">
+              {dayLabel}
+            </text>
+          );
+        })}
 
         {linePoints.map((pt, i) => (
           <text key={i} x={pt.x} y={pt.y - 6} textAnchor="middle" className="price-chart-dotlabel">

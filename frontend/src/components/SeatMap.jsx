@@ -1,12 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getSeatsForFlight } from '../services/api.js';
 
 const SECTION_ICONS = { business: '⭐', premium: '💎', economy: '🌐' };
+const SEAT_CLASS_PREF_KEY = 'travel_preferred_seat_class';
 
 export default function SeatMap({ flightId, selectedSeat, onSeatSelect }) {
   const [seats, setSeats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const containerRef = useRef(null);
 
   useEffect(() => {
     async function loadSeats() {
@@ -24,6 +26,18 @@ export default function SeatMap({ flightId, selectedSeat, onSeatSelect }) {
     }
     loadSeats();
   }, [flightId]);
+
+  // Determine preferred class from localStorage
+  const preferredClass = (() => {
+    try { return localStorage.getItem(SEAT_CLASS_PREF_KEY); } catch { return null; }
+  })();
+
+  // Auto-save seat class preference
+  useEffect(() => {
+    if (selectedSeat?.type) {
+      try { localStorage.setItem(SEAT_CLASS_PREF_KEY, selectedSeat.type); } catch { /* ignore */ }
+    }
+  }, [selectedSeat?.type]);
 
   if (loading) {
     return <div className="seat-map-loading">Loading seats...</div>;
@@ -80,8 +94,9 @@ export default function SeatMap({ flightId, selectedSeat, onSeatSelect }) {
 
         {sections.map(section => (
           <div key={section.type}>
-            <div className={`seat-section-label seat-section-${section.type}`}>
+            <div className={`seat-section-label seat-section-${section.type}${preferredClass === section.type ? ' seat-section-preferred' : ''}`}>
               {SECTION_ICONS[section.type]} {section.type.charAt(0).toUpperCase() + section.type.slice(1)}
+              {preferredClass === section.type && <span className="preferred-badge" style={{ marginLeft: '8px', fontSize: '0.65rem', background: '#f5a623', color: '#1a2340', padding: '2px 8px', borderRadius: '999px', fontWeight: 700, verticalAlign: 'middle' }}>Preferred</span>}
             </div>
             {section.rows.map(rowNum => {
               const rowSeats = rows[rowNum].seats.sort((a, b) => a.seatNumber.localeCompare(b.seatNumber));

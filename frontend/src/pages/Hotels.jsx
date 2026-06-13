@@ -104,7 +104,8 @@ export default function Hotels() {
     const dynamic = pd?.pricing ? pd.pricing.finalPrice : hotel.pricePerNight;
     navigate('/booking', {
       state: { hotelId: hotel.id, hotelName: hotel.name, hotelLocation: hotel.location,
-               pricePerNight: frozen ?? dynamic, frozenPrice: frozen, pricingBreakdown: pd?.pricing || null },
+               pricePerNight: frozen ?? dynamic, frozenPrice: frozen, pricingBreakdown: pd?.pricing || null,
+               frozenExpiresAt: pd?.frozen?.expiresAt || null },
     });
   }
 

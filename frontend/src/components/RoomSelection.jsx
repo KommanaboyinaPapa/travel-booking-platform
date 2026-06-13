@@ -1,10 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { getRoomsForHotel } from '../services/api.js';
+
+const ROOM_TYPE_PREF_KEY = 'travel_preferred_room_type';
 
 export default function RoomSelection({ hotelId, selectedRoom, onRoomSelect }) {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const preferredRoomType = useMemo(() => {
+    try { return localStorage.getItem(ROOM_TYPE_PREF_KEY); } catch { return null; }
+  }, []);
 
   useEffect(() => {
     async function loadRooms() {
@@ -15,7 +21,8 @@ export default function RoomSelection({ hotelId, selectedRoom, onRoomSelect }) {
       
       try {
         const response = await getRoomsForHotel(hotelId);
-        setRooms(response.rooms || []);
+        const roomList = response.rooms || [];
+        setRooms(roomList);
       } catch (err) {
         setError('Failed to load rooms. Please try again.');
         console.error(err);
@@ -26,6 +33,21 @@ export default function RoomSelection({ hotelId, selectedRoom, onRoomSelect }) {
 
     loadRooms();
   }, [hotelId]);
+
+  // Auto-select preferred room type when rooms load and no room is selected yet
+  useEffect(() => {
+    if (rooms.length > 0 && !selectedRoom && preferredRoomType) {
+      const match = rooms.find(r => r.roomType?.toLowerCase() === preferredRoomType.toLowerCase() && r.availability > 0);
+      if (match) onRoomSelect(match);
+    }
+  }, [rooms]);
+
+  // Save room type preference on selection
+  useEffect(() => {
+    if (selectedRoom?.roomType) {
+      try { localStorage.setItem(ROOM_TYPE_PREF_KEY, selectedRoom.roomType); } catch { /* ignore */ }
+    }
+  }, [selectedRoom?.roomType]);
 
   if (loading) {
     return <div className="room-selection-loading">Loading available rooms...</div>;

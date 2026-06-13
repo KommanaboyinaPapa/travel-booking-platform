@@ -1,5 +1,9 @@
 # Travel Booking Platform
 
+**Live URL:** [https://travel-booking-platform-taupe.vercel.app](https://travel-booking-platform-taupe.vercel.app)
+
+**Backend API:** [https://travel-booking-platform-dzoi.vercel.app](https://travel-booking-platform-dzoi.vercel.app)
+
 A full-stack travel booking platform built with **React + Vite** (frontend), **Node.js + Express** (backend), and **MySQL** (database). Developed as part of a software engineering internship, the platform covers the complete travel booking lifecycle — from authentication and search through booking, payments, reviews, live flight tracking, dynamic pricing, and AI-style personalised recommendations.
 
 ---
@@ -118,6 +122,7 @@ travel-booking-platform/
 │   │   │   ├── AuthProvider.jsx
 │   │   │   └── useAuth.js
 │   │   ├── pages/
+│   │   │   ├── AdminRefunds.jsx          ← Task 1
 │   │   │   ├── Booking.jsx
 │   │   │   ├── Dashboard.jsx
 │   │   │   ├── Flights.jsx
@@ -298,13 +303,36 @@ npm run build
 Create `backend/.env` from `backend/.env.example`:
 
 ```env
-DB_HOST=localhost
+# Database (Aiven MySQL)
+DB_HOST=<your_db_host>
 DB_PORT=3306
-DB_USER=<your_mysql_user>
-DB_PASSWORD=<your_mysql_password>
+DB_USER=<your_db_user>
+DB_PASSWORD=<your_db_password>
 DB_NAME=travel_booking_db
+
+# Authentication
 JWT_SECRET=<your_jwt_secret>
+
+# Server
 PORT=5000
+CORS_ORIGIN=http://localhost:5173,https://travel-booking-platform-taupe.vercel.app
+```
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `DB_HOST` | MySQL host (Aiven or localhost) | `mysql-xxxxxxxx.aivencloud.com` |
+| `DB_PORT` | MySQL port | `3306` |
+| `DB_USER` | MySQL user | `avnadmin` |
+| `DB_PASSWORD` | MySQL password | — |
+| `DB_NAME` | Database name | `travel_booking_db` |
+| `JWT_SECRET` | Secret key for JWT signing | — |
+| `PORT` | Backend server port | `5000` |
+| `CORS_ORIGIN` | Comma-separated allowed origins | `http://localhost:5173,https://travel-booking-platform-taupe.vercel.app` |
+
+**Frontend:** Create `frontend/.env`:
+
+```env
+VITE_API_URL=https://travel-booking-platform-dzoi.vercel.app/api
 ```
 
 ---
@@ -480,60 +508,89 @@ npm run build
 
 ## Screenshots Checklist
 
-Capture the following screens to document the completed platform:
+All features listed below have been verified as implemented and working.
 
 ### Authentication
-- [ ] Register page — form with name, email, password
-- [ ] Login page — form with email, password
-- [ ] Navbar showing logged-in user name and Logout button
+- [x] Register page — form with name, email, password (with client + server validation)
+- [x] Login page — form with email, password
+- [x] Navbar showing logged-in user name and Logout button
 
 ### Hotels & Flights
-- [ ] Hotels listing page — hotel cards with price, rating, available rooms
-- [ ] Flights listing page — flight cards with route, departure time, price
-- [ ] Hotel card with "View Pricing" expanded showing Price Breakdown
-- [ ] Flight card with "View Pricing" expanded showing Price Breakdown
-- [ ] Price History sparkline graph on hotel or flight card
-- [ ] "🔒 Freeze Price (30 min)" button before freezing
-- [ ] Frozen price indicator with expiry time after freezing
+- [x] Hotels listing page — hotel cards with price, rating, available rooms
+- [x] Flights listing page — flight cards with route, departure time, price
+- [x] Hotel card with "View Pricing" expanded showing Price Breakdown
+- [x] Flight card with "View Pricing" expanded showing Price Breakdown
+- [x] Price History sparkline graph connected to real API data
+- [x] "🔒 Freeze Price (30 min)" button
+- [x] Frozen price indicator with expiry timer countdown
 
 ### Booking Flow
-- [ ] Booking page — hotel booking with check-in/out dates and nights
-- [ ] Room selection grid showing Standard / Deluxe / Suite options
-- [ ] Seat map showing Economy / Premium / Business seats
-- [ ] Booking confirmation page with price breakdown shown
-- [ ] Frozen price displayed with strikethrough original on booking page
-- [ ] My Bookings page listing confirmed bookings
+- [x] Booking page — hotel booking with check-in/out dates and nights
+- [x] Room selection grid showing Standard / Deluxe / Suite options
+- [x] Seat map showing Economy / Premium / Business seats with preferred class indicator
+- [x] Last selected room type and seat class saved in localStorage
+- [x] Frozen price displayed with strikethrough and countdown on booking page
+- [x] My Bookings page listing confirmed bookings
 
 ### Cancellation & Refund
-- [ ] Cancel booking modal with reason field
-- [ ] Refund status tracker showing Pending → Processed → Completed steps
+- [x] Cancel booking modal with reason dropdown (5 options)
+- [x] 50% / 25% refund calculation based on cancellation timing
+- [x] Refund status tracker showing Pending → Processed → Completed steps
+- [x] Expected completion timeline shown (7-day estimate)
+- [x] Admin refund management dashboard
 
 ### Reviews & Ratings
-- [ ] Review form with star rating selector and text input
-- [ ] Review list showing ratings, text, replies, helpful count
-- [ ] Flagging a review — flag reason modal
-- [ ] Moderator panel — flagged review list with Resolve/Delete buttons
+- [x] Review form with star rating selector and text input
+- [x] Photo upload preview with type/size validation and memory leak cleanup
+- [x] Review replies — authenticated users can reply to reviews
+- [x] Helpful vote with auth-protected backend endpoint
+- [x] Flagging a review — modal with 5 reason options
+- [x] Moderator panel — flagged review list with Keep/Delete buttons
+- [x] Sorting: Newest, Highest Rated, Most Helpful
 
 ### Live Flight Status
-- [ ] Live Flight Status page with tracked and untracked flight sections
-- [ ] Flight card showing On Time / Boarding / Delayed status badge
-- [ ] Alert notification panel showing delayed/boarding alerts
-- [ ] Dashboard widget with tracked flights and recent alerts
+- [x] Live Flight Status page with tracked and untracked flight sections
+- [x] Flight card showing On Time / Boarding / Delayed by 1h status badges
+- [x] Delay reason, revised departure, estimated arrival displayed
+- [x] Alert notification panel showing delayed/boarding/schedule alerts
+- [x] Browser push notifications via Notification API (with permission request)
+- [x] Dashboard widget with tracked flights and recent alerts
+
+### Seat & Room Selection
+- [x] Interactive seat map (Economy / Premium / Business tiers)
+- [x] Seat pricing tiers visible with color-coded legend
+- [x] Selected seat saved in booking record
+- [x] Room type grid (Standard / Deluxe / Suite) with images and pricing
+- [x] Room images from Unsplash displayed as card backgrounds
+- [x] Last selected seat class and room type saved in localStorage (pre-filled on next visit)
 
 ### Dynamic Pricing
-- [ ] Price breakdown card — base price, each adjustment line, final price
-- [ ] Price History sparkline showing price trend over time
-- [ ] Price freeze in action — frozen badge on booking page
+- [x] Holiday surcharge (+20%) for US holidays
+- [x] Peak season surcharge (+15%) for summer and winter holidays
+- [x] Weekend surcharge (+10%) for Saturday/Sunday
+- [x] Demand-based pricing up to +15%
+- [x] Price breakdown card showing each adjustment factor
+- [x] Price freeze (30 min) with countdown timer
+- [x] Price history graph connected to real backend API endpoint
 
 ### Recommendations
-- [ ] Home page — "✨ Recommended For You" or "Popular Picks" section
-- [ ] Dashboard — Recommendations widget above Live Flight Status
-- [ ] Recommendation card for a hotel with Book Hotel button
-- [ ] Recommendation card for a flight with Book Flight button
-- [ ] Recommendation card for a destination with Explore Hotels button
-- [ ] "Why? 💡" tooltip open showing recommendation reason
-- [ ] "👍 Helpful" button clicked — confirmation text shown
-- [ ] "👎 Irrelevant" button clicked — card dismissed from list
+- [x] Personalized recommendations on Home page (authenticated users) and Dashboard
+- [x] Tag-based content filtering algorithm using booking history
+- [x] "Why? 💡" tooltip showing recommendation reason
+- [x] Helpful / Irrelevant feedback buttons with API persistence
+- [x] Irrelevant feedback dismisses card; feedback weights future scores (+2/-3)
+- [x] Fallback to top-rated hotels and cheapest flights for new users
+
+### Security & Stability
+- [x] Safe JSON.parse with try/catch in API service
+- [x] Safe localStorage parsing in AuthProvider
+- [x] Protected routes: /booking, /my-bookings, /dashboard, /moderator, /admin-reviews, /admin-refunds
+- [x] requireAuth middleware on: create review, reply to review, helpful vote, flag review, create booking, cancel booking, price freeze, recommendations, recommendation feedback
+- [x] Email format validation (client + server)
+- [x] Password minimum length 6 (client + server)
+- [x] Backend required-field validation for auth, reviews, bookings
+- [x] No hardcoded localhost in production code
+- [x] Frontend build passes (Vite production build, 0 errors)
 
 ---
 

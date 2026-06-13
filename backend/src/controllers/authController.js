@@ -35,6 +35,15 @@ export async function register(req, res) {
   if (!name || !email || !password) {
     return res.status(400).json({ message: 'Name, email, and password are required.' });
   }
+  if (typeof name !== 'string' || !name.trim()) {
+    return res.status(400).json({ message: 'Name is required.' });
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return res.status(400).json({ message: 'Invalid email format.' });
+  }
+  if (password.length < 6) {
+    return res.status(400).json({ message: 'Password must be at least 6 characters.' });
+  }
 
   if (DB_AVAILABLE) {
     try {

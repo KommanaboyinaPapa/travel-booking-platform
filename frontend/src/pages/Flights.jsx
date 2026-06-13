@@ -98,7 +98,8 @@ export default function Flights() {
     navigate('/booking', {
       state: { flightId: flight.id, airline: flight.airline, origin: flight.origin,
                destination: flight.destination, departureTime: flight.departureTime,
-               price: frozen ?? dynamic, frozenPrice: frozen, pricingBreakdown: pd?.pricing || null },
+               price: frozen ?? dynamic, frozenPrice: frozen, pricingBreakdown: pd?.pricing || null,
+               frozenExpiresAt: pd?.frozen?.expiresAt || null },
     });
   }
 

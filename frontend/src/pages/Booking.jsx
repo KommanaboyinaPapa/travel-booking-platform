@@ -22,7 +22,7 @@ export default function Booking() {
   const {
     hotelId, hotelName, hotelLocation, pricePerNight,
     flightId, airline, origin, destination, departureTime, price,
-    frozenPrice, pricingBreakdown,
+    frozenPrice, pricingBreakdown, frozenExpiresAt,
   } = state;
 
   if (!user) {
@@ -144,7 +144,7 @@ export default function Booking() {
 
               {pricingBreakdown && (
                 <div className="pricing-section">
-                  <PriceBreakdown pricing={pricingBreakdown} frozen={frozenPrice ? { frozenPrice, expiresAt: null } : null} />
+                  <PriceBreakdown pricing={pricingBreakdown} frozen={frozenPrice ? { frozenPrice, expiresAt: frozenExpiresAt } : null} />
                 </div>
               )}
             </div>
@@ -272,7 +272,7 @@ export default function Booking() {
 
           {pricingBreakdown && (
             <div className="pricing-section">
-              <PriceBreakdown pricing={pricingBreakdown} frozen={frozenPrice ? { frozenPrice, expiresAt: null } : null} />
+              <PriceBreakdown pricing={pricingBreakdown} frozen={frozenPrice ? { frozenPrice, expiresAt: frozenExpiresAt } : null} />
             </div>
           )}
 

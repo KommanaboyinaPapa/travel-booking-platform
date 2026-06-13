@@ -11,8 +11,20 @@ export default function Register() {
   const { register } = useAuth();
   const navigate     = useNavigate();
 
+  function validateForm() {
+    if (!name.trim()) return 'Name is required.';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return 'Please enter a valid email address.';
+    if (password.length < 6) return 'Password must be at least 6 characters.';
+    return '';
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
     setError('');
     setLoading(true);
     try {
