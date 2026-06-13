@@ -29,7 +29,7 @@ function App() {
             <Route path="/hotels" element={<Hotels />} />
             <Route path="/flights" element={<Flights />} />
             <Route path="/live-flight-status" element={<LiveFlightStatus />} />
-            <Route path="/booking" element={<Booking />} />
+            <Route path="/booking" element={<ProtectedRoute><Booking /></ProtectedRoute>} />
             <Route path="/my-bookings" element={<ProtectedRoute><MyBookings /></ProtectedRoute>} />
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/moderator" element={<ProtectedRoute><Moderator /></ProtectedRoute>} />

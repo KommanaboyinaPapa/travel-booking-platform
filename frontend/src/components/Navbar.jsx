@@ -22,49 +22,45 @@ export default function Navbar() {
   return (
     <nav className="navbar">
       <div className="navbar-inner">
-        {/* Brand */}
         <NavLink to="/" className="brand" onClick={() => setMenuOpen(false)}>
           ✈️ TravelBook<span className="brand-dot" />
         </NavLink>
 
-        {/* Main links */}
-        <div className="nav-links">
-          {NAV_LINKS.map(link => (
-            <NavLink
-              key={link.to}
-              to={link.to}
-              end={link.to === '/'}
-              className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
-            >
-              {link.label}
-            </NavLink>
-          ))}
+        <button className={`hamburger${menuOpen ? ' open' : ''}`} onClick={() => setMenuOpen(v => !v)} aria-label="Toggle navigation menu">
+          <span /><span /><span />
+        </button>
 
-          {user?.role === 'admin' && (
-            <NavLink to="/admin-reviews" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
-              🛡️ Admin
-            </NavLink>
-          )}
-        </div>
-
-        {/* User section */}
-        <div className="nav-user">
-          {!user ? (
-            <>
-              <NavLink to="/login"    className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>Login</NavLink>
-              <NavLink to="/register" className="button button-sm" style={{ background: '#f5a623', color: '#1a2340', borderRadius: '999px', padding: '7px 18px', fontWeight: 700, border: 'none' }}>
-                Sign Up
+        <div className={`nav-menu${menuOpen ? ' open' : ''}`}>
+          <div className="nav-links">
+            {NAV_LINKS.map(link => (
+              <NavLink key={link.to} to={link.to} end={link.to === '/'} className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`} onClick={() => setMenuOpen(false)}>
+                {link.label}
               </NavLink>
-            </>
-          ) : (
-            <>
-              <span className="nav-username">{user.name}</span>
-              <div className="nav-avatar" title={user.name}>{initials}</div>
-              <button onClick={logout} className="button button-sm button-ghost" style={{ color: 'rgba(255,255,255,0.82)', borderColor: 'rgba(255,255,255,0.3)' }}>
-                Logout
-              </button>
-            </>
-          )}
+            ))}
+            {user?.role === 'admin' && (
+              <NavLink to="/admin-reviews" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`} onClick={() => setMenuOpen(false)}>
+                🛡️ Admin
+              </NavLink>
+            )}
+          </div>
+          <div className="nav-user">
+            {!user ? (
+              <>
+                <NavLink to="/login" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`} onClick={() => setMenuOpen(false)}>Login</NavLink>
+                <NavLink to="/register" className="button button-sm" style={{ background: '#f5a623', color: '#1a2340', borderRadius: '999px', padding: '7px 18px', fontWeight: 700, border: 'none' }} onClick={() => setMenuOpen(false)}>
+                  Sign Up
+                </NavLink>
+              </>
+            ) : (
+              <>
+                <span className="nav-username">{user.name}</span>
+                <div className="nav-avatar" title={user.name}>{initials}</div>
+                <button onClick={logout} className="button button-sm button-ghost" style={{ color: 'rgba(255,255,255,0.82)', borderColor: 'rgba(255,255,255,0.3)' }}>
+                  Logout
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </nav>

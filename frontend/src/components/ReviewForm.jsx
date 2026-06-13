@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import StarRating from './StarRating.jsx';
 
 function fileToDataUrl(file) {
@@ -42,6 +42,12 @@ export default function ReviewForm({ entityKey, onSubmitReview, submitting, erro
     setSelectedFile(file);
     setPreviewUrl(URL.createObjectURL(file));
   }
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
 
   async function handleSubmit(event) {
     event.preventDefault();

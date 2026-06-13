@@ -13,7 +13,7 @@ const router = express.Router();
 router.post('/', requireAuth, createReview);
 router.get('/', listReviews);
 router.post('/:id/reply', requireAuth, addReply);
-router.post('/:id/helpful', markHelpful);
+router.post('/:id/helpful', requireAuth, markHelpful);
 router.post('/:id/flag', requireAuth, flagReview);
 
 export default router;

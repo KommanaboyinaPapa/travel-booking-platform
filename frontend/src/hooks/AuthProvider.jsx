@@ -4,7 +4,14 @@ import { loginUser, registerUser } from '../services/api.js';
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('travel_user')) || null);
+  const [user, setUser] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('travel_user')) || null;
+    } catch {
+      localStorage.removeItem('travel_user');
+      return null;
+    }
+  });
 
   async function login(credentials) {
     const data = await loginUser(credentials);

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { createReply, createReview, flagReview, getReviews, markReviewHelpful } from '../services/api.js';
 import ReviewForm from './ReviewForm.jsx';
 import ReviewList from './ReviewList.jsx';
@@ -172,7 +173,7 @@ export default function ReviewSection({ hotelId, flightId }) {
           ) : (
             <div style={{ textAlign: 'center', padding: '20px', background: '#f8fafc', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
               <p style={{ margin: 0, fontSize: '0.85rem', color: '#7a8fb0' }}>
-                Please <a href="/login" style={{ color: '#0071c2', fontWeight: 700, textDecoration: 'underline' }}>log in</a> to submit a rating and review.
+                Please <Link to="/login" style={{ color: '#0071c2', fontWeight: 700, textDecoration: 'underline' }}>log in</Link> to submit a rating and review.
               </p>
             </div>
           )}
