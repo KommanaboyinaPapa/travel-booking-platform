@@ -43,11 +43,19 @@ export default function Booking() {
   if (isFlight) {
     totalPrice = selectedSeat ? selectedSeat.price : basePrice;
   } else if (isHotel) {
-    totalPrice = selectedRoom ? selectedRoom.price * nights : basePrice * nights;
+    totalPrice = selectedRoom ? selectedRoom.price * (Number(nights) || 1) : basePrice * (Number(nights) || 1);
   }
 
   function handleNightsChange(e) {
-    setNights(Math.max(1, parseInt(e.target.value) || 1));
+    const raw = e.target.value;
+    if (raw === '') {
+      setNights('');
+      return;
+    }
+    const num = parseInt(raw, 10);
+    if (!isNaN(num) && num >= 1) {
+      setNights(num);
+    }
   }
 
   function handleSeatSelect(seat) {
