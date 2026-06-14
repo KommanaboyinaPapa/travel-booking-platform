@@ -251,17 +251,19 @@ export default function Booking() {
               }
             </p>
 
-            <div className="form-field" style={{ marginTop: '15px' }}>
-              <label htmlFor="checkIn">Check-in Date</label>
-              <input id="checkIn" type="date" value={checkIn} onChange={e => setCheckIn(e.target.value)} />
-            </div>
-            <div className="form-field">
-              <label htmlFor="checkOut">Check-out Date</label>
-              <input id="checkOut" type="date" value={checkOut} onChange={e => setCheckOut(e.target.value)} />
-            </div>
-            <div className="form-field">
-              <label htmlFor="nights">Number of Nights</label>
-              <input id="nights" type="number" min="1" value={nights} onChange={handleNightsChange} />
+            <div className="booking-date-fields">
+              <div className="form-field">
+                <label htmlFor="checkIn">Check-in Date</label>
+                <input id="checkIn" type="date" value={checkIn} onChange={e => setCheckIn(e.target.value)} />
+              </div>
+              <div className="form-field">
+                <label htmlFor="checkOut">Check-out Date</label>
+                <input id="checkOut" type="date" value={checkOut} onChange={e => setCheckOut(e.target.value)} />
+              </div>
+              <div className="form-field">
+                <label htmlFor="nights">Number of Nights</label>
+                <input id="nights" type="number" min="1" value={nights} onChange={handleNightsChange} />
+              </div>
             </div>
 
             <div className="room-select-section">
